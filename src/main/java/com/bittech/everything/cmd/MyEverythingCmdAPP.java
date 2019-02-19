@@ -2,7 +2,9 @@ package com.bittech.everything.cmd;
 
 import com.bittech.everything.core.MyEverythingManager;
 import com.bittech.everything.core.model.Condition;
+import com.bittech.everything.core.model.Thing;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -13,14 +15,17 @@ public class MyEverythingCmdAPP {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("这是Everything Plus应用程序的命令行交互程序");
-        //欢迎
+//        System.out.println("这是MyEverything应用程序的命令行交互程序");
+        // 欢迎
         welcome();
 
-        //统一调度器
+        // 统一调度器
         MyEverythingManager manager = MyEverythingManager.getInstance();
 
-        //交互式
+        // 启动后台清理线程
+        manager.startBackgroundClearThread();
+
+        // 交互式
         interactive(manager);
 
     }
@@ -72,17 +77,15 @@ public class MyEverythingCmdAPP {
         System.out.println("检索功能");
         //统一调度器中的search
         //name fileType limit orderByAsc
-        manager.search(condition);
+        List<Thing> thingList = manager.search(condition);
+        for (Thing thing : thingList) {
+            System.out.println(thing.getPath());
+        }
     }
 
     private static void index(MyEverythingManager manager) {
         //统一调度器中的index
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                manager.buildIndex();
-            }
-        }).start();
+        new Thread(manager::buildIndex).start();
     }
 
     private static void quit() {
@@ -91,7 +94,7 @@ public class MyEverythingCmdAPP {
     }
 
     private static void welcome() {
-        System.out.println("欢迎使用，Everything Plus");
+        System.out.println("欢迎使用，My Everything...");
     }
 
     private static void help() {

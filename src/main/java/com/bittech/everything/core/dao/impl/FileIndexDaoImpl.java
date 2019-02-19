@@ -50,9 +50,30 @@ public class FileIndexDaoImpl implements FileIndexDao {
         } catch (SQLException e) {
 
         } finally {
-            releaseResource(null,statement,connection);
+            releaseResource(null, statement, connection);
         }
 
+    }
+
+    @Override
+    public void delete(Thing thing) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            //1.获取数据库连接
+            connection = dataSource.getConnection();
+            //2.准备SQL语句---按照path删除（名字可能重名）
+            String sql = "delete from file_index where path like '" + thing.getPath() + "%'";
+            //3.准备命令
+            statement = connection.prepareStatement(sql);
+            //4.设置参数 1 2 3 4
+            //5.执行命令
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            releaseResource(null, statement, connection);
+        }
     }
 
     @Override
@@ -118,7 +139,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
             }
 
         } catch (SQLException e) {
-
+            e.printStackTrace();
         } finally {
             releaseResource(resultSet, statement, connection);
         }

@@ -20,8 +20,8 @@ public class FileIndexInterceptor implements FileInterceptor {
 
     @Override
     public void apply(File file) {
+        // 插入
         Thing thing = FileConvertThing.convert(file);
-        System.out.println("Thing ==>" + thing);
         fileIndexDao.insert(thing);
     }
 }

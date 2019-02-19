@@ -1,6 +1,7 @@
 package com.bittech.everything.core.dao;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.bittech.everything.config.MyEverythingConfig;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -44,7 +45,7 @@ public class DataSourceFactory {
                     String workDir = System.getProperty("user.dir");
 
                     //JDBC规范中关于H2 jdbc:h2:filepath--->存储到本地文件
-                    dataSource.setUrl("jdbc:h2:" + workDir + File.separator + "my_everything");
+                    dataSource.setUrl("jdbc:h2:" + MyEverythingConfig.getInstance().getH2IndexPath());
                 }
             }
         }
@@ -74,9 +75,7 @@ public class DataSourceFactory {
                     if (!line.startsWith("--")) { // 排除 --开始的注释内容
                         sqlBuilder.append(line); // 添加到sqlBuilder
                     }
-
                 }
-
             }
             //3.获取数据库连接和名称执行SQL
             String sql = sqlBuilder.toString(); // 把输入流--->String
@@ -91,22 +90,8 @@ public class DataSourceFactory {
             connection.close();
             statement.close();
 
-        } catch (IOException e) {
-
-        } catch (SQLException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
-
-
     }
-
-//    public static void main(String[] args) {
-////        检测数据源是否创建成功
-////        DataSource dataSource = DataSourceFactory.dataSource();
-////        System.out.println(dataSource);
-//
-//        DataSourceFactory.initDatabase();
-//
-//    }
-
 }

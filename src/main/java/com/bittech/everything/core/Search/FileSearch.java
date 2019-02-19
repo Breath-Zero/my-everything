@@ -1,8 +1,5 @@
 package com.bittech.everything.core.Search;
 
-import com.bittech.everything.core.Search.impl.FileSearchImpl;
-import com.bittech.everything.core.dao.DataSourceFactory;
-import com.bittech.everything.core.dao.impl.FileIndexDaoImpl;
 import com.bittech.everything.core.model.Condition;
 import com.bittech.everything.core.model.Thing;
 
@@ -20,11 +17,4 @@ public interface FileSearch {
      * @return
      */
     List<Thing> search(Condition condition);
-
-//    public static void main(String[] args) {
-//        FileSearch fileSearch = new FileSearchImpl(new FileIndexDaoImpl(DataSourceFactory.dataSource()));
-//
-//        List<Thing> list = fileSearch.search(new Condition());
-//        System.out.println(list);
-//    }
 }
