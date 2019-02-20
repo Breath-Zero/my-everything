@@ -46,6 +46,15 @@ public class DataSourceFactory {
 
                     //JDBC规范中关于H2 jdbc:h2:filepath--->存储到本地文件
                     dataSource.setUrl("jdbc:h2:" + MyEverythingConfig.getInstance().getH2IndexPath());
+
+
+                    //Druid数据库连接池的可配置参数
+                    //https://github.com/alibaba/druid/wiki/DruidDataSource%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7%E5%88%97%E8%A1%A8
+                    //第一种
+                    dataSource.setValidationQuery("select now()");
+//                    第二种
+//                    dataSource.setTestWhileIdle(false);
+
                 }
             }
         }

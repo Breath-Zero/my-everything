@@ -9,7 +9,6 @@ import com.bittech.everything.core.dao.impl.FileIndexDaoImpl;
 import com.bittech.everything.core.index.FileScan;
 import com.bittech.everything.core.index.impl.FileScanImpl;
 import com.bittech.everything.core.interceptor.impl.FileIndexInterceptor;
-import com.bittech.everything.core.interceptor.impl.FilePrintInterceptor;
 import com.bittech.everything.core.interceptor.impl.ThingClearInterceptor;
 import com.bittech.everything.core.model.Condition;
 import com.bittech.everything.core.model.Thing;
@@ -59,8 +58,8 @@ public class MyEverythingManager {
         //数据源对象
         DataSource dataSource = DataSourceFactory.dataSource();
         // 检查当前数据库空间是否有数据库
-        //检查数据库
-        checkDatabase();
+        //检查数据库--初始化
+        initOrResetDatabase();
 
         //业务层的对象
         FileIndexDao fileIndexDao = new FileIndexDaoImpl(dataSource);
@@ -78,12 +77,9 @@ public class MyEverythingManager {
         this.backgroundClearThread.setDaemon(true); // 设置为守护线程
     }
 
-    private void checkDatabase() {
-        String fileName = MyEverythingConfig.getInstance().getH2IndexPath() + ".mv.db";
-        File dbFile = new File(fileName);
-        if (dbFile.isFile() && !dbFile.exists()) {
-            DataSourceFactory.initDatabase();
-        }
+
+    public void initOrResetDatabase() {
+        DataSourceFactory.initDatabase();
     }
 
     public static MyEverythingManager getInstance() {
@@ -123,6 +119,8 @@ public class MyEverythingManager {
      * 索引
      */
     public void buildIndex() {
+        // 初始化数据库
+        initOrResetDatabase();
         Set<String> directories = MyEverythingConfig.getInstance().getIncludePath();
 
         if (this.executorService == null) {

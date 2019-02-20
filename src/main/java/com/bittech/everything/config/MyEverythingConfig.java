@@ -1,6 +1,8 @@
 package com.bittech.everything.config;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.File;
 import java.nio.file.FileSystem;
@@ -19,6 +21,7 @@ import java.util.function.Consumer;
 
 // 配置类应该是一个单例
 @Getter
+@ToString
 public class MyEverythingConfig {
 
     private static volatile MyEverythingConfig config;
@@ -34,6 +37,21 @@ public class MyEverythingConfig {
     private Set<String> excludePath = new HashSet<>(); // 需要提供getter方法
 
     // TODO 可配置的参数会在这里体现
+
+    /**
+     * 检索最大的返回值数量限制（30）
+     */
+
+    @Setter
+    private Integer maxReturn = 30;
+
+    /**
+     * 排序方式（默认为 true--> 升序）   按照路径深度排序
+     * order by dept asc limit 30 offset 0---> 按照升序取前30个
+     */
+
+    @Setter
+    private Boolean deptOrderAsc = true;
 
     /**
      * H2数据库文件路径
