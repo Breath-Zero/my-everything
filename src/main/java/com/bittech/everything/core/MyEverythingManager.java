@@ -3,6 +3,7 @@ package com.bittech.everything.core;
 import com.bittech.everything.config.MyEverythingConfig;
 import com.bittech.everything.core.Search.FileSearch;
 import com.bittech.everything.core.Search.impl.FileSearchImpl;
+import com.bittech.everything.core.common.HandlePath;
 import com.bittech.everything.core.dao.DataSourceFactory;
 import com.bittech.everything.core.dao.FileIndexDao;
 import com.bittech.everything.core.dao.impl.FileIndexDaoImpl;
@@ -12,6 +13,8 @@ import com.bittech.everything.core.interceptor.impl.FileIndexInterceptor;
 import com.bittech.everything.core.interceptor.impl.ThingClearInterceptor;
 import com.bittech.everything.core.model.Condition;
 import com.bittech.everything.core.model.Thing;
+import com.bittech.everything.core.monitor.FileWatch;
+import com.bittech.everything.core.monitor.impl.FileWatchImpl;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -49,6 +52,11 @@ public class MyEverythingManager {
     // 表示变量--默认为false
     private AtomicBoolean backgroundClearThreadStatus = new AtomicBoolean(false);
 
+    /**
+     * 文件监控
+     */
+    private FileWatch fileWatch;
+
 
     private MyEverythingManager() {
         this.initComponent();
@@ -75,6 +83,8 @@ public class MyEverythingManager {
         this.backgroundClearThread = new Thread(this.thingClearInterceptor);
         this.backgroundClearThread.setName("Thread-Thing-Clear");
         this.backgroundClearThread.setDaemon(true); // 设置为守护线程
+        //文件监控对象
+        this.fileWatch = new FileWatchImpl(fileIndexDao);
     }
 
 
@@ -168,5 +178,23 @@ public class MyEverythingManager {
         } else {
             System.out.println("不能重复启用清理线程");
         }
+    }
+
+    /**
+     * 启动文件系统监听
+     */
+    public void startFileSystemMonitor() {
+        MyEverythingConfig config = MyEverythingConfig.getInstance();
+        HandlePath handlePath = new HandlePath();
+        handlePath.setIncludePath(config.getIncludePath());
+        handlePath.setExcludePath(config.getExcludePath());
+        this.fileWatch.monitor(handlePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("文件系统监控启动");
+                fileWatch.start();
+            }
+        }).start();
     }
 }
